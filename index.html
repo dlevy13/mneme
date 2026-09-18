@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mneme</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app">
+      <section class="trainer" aria-labelledby="app-title">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Mneme</p>
+            <h1 id="app-title">Cartes de traduction</h1>
+          </div>
+          <button class="icon-button" id="next-card" type="button" title="Nouvelle carte" aria-label="Nouvelle carte">
+            ↻
+          </button>
+        </header>
+
+        <button class="flashcard" id="flashcard" type="button" aria-live="polite">
+          <span class="card-label" id="card-direction">Mot</span>
+          <span class="card-word" id="card-prompt"></span>
+          <span class="card-hint" id="card-hint">Cliquer pour révéler</span>
+          <span class="card-answer" id="card-answer" hidden></span>
+          <span class="card-sentence" id="card-sentence" hidden></span>
+        </button>
+
+        <div class="actions">
+          <button id="reveal-card" type="button">Voir la réponse</button>
+          <button id="shuffle-card" type="button">Carte suivante</button>
+        </div>
+      </section>
+
+      <aside class="editor" aria-labelledby="editor-title">
+        <div class="remote-panel">
+          <div>
+            <h2>Firebase</h2>
+            <p>Configuration Web Firebase pour Firestore.</p>
+          </div>
+          <label>
+            <span>API key</span>
+            <input id="firebase-api-key" type="password" placeholder="AIza..." autocomplete="off">
+          </label>
+          <label>
+            <span>Project ID</span>
+            <input id="firebase-project-id" type="text" placeholder="mon-projet" autocomplete="off">
+          </label>
+          <label>
+            <span>App ID</span>
+            <input id="firebase-app-id" type="text" placeholder="1:123:web:abc" autocomplete="off">
+          </label>
+          <div class="editor-actions">
+            <button id="save-config" type="button">Connecter</button>
+            <button id="load-remote-cards" type="button">Charger Firebase</button>
+          </div>
+          <p class="status" id="sync-status">Mode local.</p>
+        </div>
+
+        <div class="editor-header">
+          <div>
+            <h2 id="editor-title">Liste des cartes</h2>
+            <p>Une carte par ligne : mot ; traduction ; phrase facultative</p>
+          </div>
+          <span class="count" id="card-count">0 carte</span>
+        </div>
+
+        <details class="csv-menu">
+          <summary>Importer depuis un CSV/TXT</summary>
+          <div class="csv-panel">
+            <label>
+              <span>Fichier CSV ou TXT</span>
+              <input id="csv-file" type="file" accept=".csv,.txt,text/csv,text/plain">
+            </label>
+            <div class="csv-grid">
+              <label>
+                <span>Séparateur</span>
+                <select id="csv-delimiter">
+                  <option value="auto">Auto</option>
+                  <option value=",">Virgule</option>
+                  <option value=";">Point-virgule</option>
+                  <option value="tab">Tabulation</option>
+                </select>
+              </label>
+              <label class="checkbox-label">
+                <input id="csv-has-header" type="checkbox" checked>
+                <span>Ignorer l'en-tête</span>
+              </label>
+            </div>
+            <div class="editor-actions">
+              <button id="import-csv" type="button">Importer dans la liste</button>
+              <button id="import-save-csv" type="button">Importer et enregistrer</button>
+            </div>
+            <p class="format">Colonnes attendues : mot, traduction, phrase facultative.</p>
+          </div>
+        </details>
+
+        <textarea id="cards-input" spellcheck="false">bonjour; hello; Bonjour, comment allez-vous ?
+merci; thank you; Merci pour votre aide.
+livre; book; Je lis un livre le soir.
+maison; house; Cette maison est ancienne.
+vite; quickly; Il marche vite.</textarea>
+
+        <div class="editor-actions">
+          <button id="load-cards" type="button">Charger la liste</button>
+          <button id="save-remote-cards" type="button">Enregistrer Firebase</button>
+          <button id="reset-cards" type="button">Exemple</button>
+        </div>
+
+        <p class="format">
+          Le tirage choisit au hasard le sens : mot vers traduction ou traduction vers mot.
+        </p>
+      </aside>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

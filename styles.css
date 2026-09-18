@@ -1,0 +1,339 @@
+:root {
+  color-scheme: light;
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --text: #171717;
+  --muted: #66645f;
+  --border: #d8d4cc;
+  --accent: #226c67;
+  --accent-dark: #174d49;
+  --answer: #8f3f2f;
+  --shadow: 0 18px 60px rgba(31, 28, 22, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app {
+  width: min(1120px, calc(100% - 32px));
+  min-height: 100vh;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 28px;
+  align-items: center;
+  padding: 32px 0;
+}
+
+.trainer,
+.editor {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.trainer {
+  padding: 28px;
+}
+
+.topbar,
+.editor-header,
+.editor-actions,
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: clamp(2rem, 6vw, 4.3rem);
+  line-height: 1;
+}
+
+h2 {
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.editor-header p,
+.format,
+.remote-panel p,
+.status {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.icon-button {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #f8f7f4;
+  color: var(--text);
+  font-size: 1.4rem;
+}
+
+.flashcard {
+  width: 100%;
+  min-height: 380px;
+  margin: 28px 0 20px;
+  padding: 28px;
+  display: grid;
+  place-items: center;
+  grid-template-rows: auto 1fr auto auto auto;
+  gap: 14px;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  background: #fbfaf7;
+  color: var(--text);
+  text-align: center;
+}
+
+.card-label,
+.count {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #e7f0ee;
+  color: var(--accent-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.card-word {
+  overflow-wrap: anywhere;
+  font-size: clamp(2.4rem, 8vw, 6.4rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.card-hint {
+  color: var(--muted);
+  font-size: 0.98rem;
+}
+
+.card-answer {
+  overflow-wrap: anywhere;
+  color: var(--answer);
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  font-weight: 800;
+}
+
+.card-sentence {
+  max-width: 640px;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.actions button,
+.editor-actions button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+}
+
+.actions button:first-child,
+.editor-actions button:last-child {
+  background: white;
+  color: var(--accent);
+}
+
+.editor {
+  padding: 22px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 360px;
+  margin: 20px 0 14px;
+  padding: 14px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fffdfa;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+input {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fffdfa;
+  color: var(--text);
+}
+
+select {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fffdfa;
+  color: var(--text);
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.remote-panel {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 22px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.csv-menu {
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fbfaf7;
+}
+
+.csv-menu summary {
+  min-height: 44px;
+  padding: 12px 14px;
+  color: var(--accent-dark);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.csv-panel {
+  display: grid;
+  gap: 12px;
+  padding: 0 14px 14px;
+}
+
+.csv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: end;
+}
+
+.checkbox-label {
+  min-height: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox-label input {
+  width: 18px;
+  min-height: 18px;
+}
+
+.status {
+  min-height: 20px;
+}
+
+.status.error {
+  color: #a33222;
+  font-weight: 700;
+}
+
+textarea:focus,
+input:focus,
+select:focus,
+button:focus-visible {
+  outline: 3px solid rgba(34, 108, 103, 0.25);
+  outline-offset: 2px;
+}
+
+@media (max-width: 860px) {
+  .app {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    padding: 18px 0;
+  }
+
+  .trainer,
+  .editor {
+    padding: 18px;
+  }
+
+  .flashcard {
+    min-height: 320px;
+    padding: 22px 16px;
+  }
+}
+
+@media (max-width: 520px) {
+  .app {
+    width: min(100% - 20px, 1120px);
+  }
+
+  .topbar,
+  .editor-header,
+  .editor-actions,
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .csv-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions button,
+  .editor-actions button {
+    width: 100%;
+  }
+}

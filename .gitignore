@@ -1,0 +1,14 @@
+.DS_Store
+
+# Local editor and IDE files
+.idea/
+*.iml
+
+# Python virtual environments
+.venv/
+venv/
+
+# Logs and temporary files
+*.log
+tmp/
+temp/

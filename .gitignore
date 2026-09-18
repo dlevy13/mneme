@@ -12,3 +12,6 @@ venv/
 *.log
 tmp/
 temp/
+
+# Local Firebase credentials for this app
+firebase-config.js

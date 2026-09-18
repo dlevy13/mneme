@@ -200,9 +200,11 @@ function createFirebaseClient() {
 }
 
 function loadSavedConfig() {
-  firebaseApiKeyInput.value = localStorage.getItem("mneme.firebaseApiKey") || "";
-  firebaseProjectIdInput.value = localStorage.getItem("mneme.firebaseProjectId") || "";
-  firebaseAppIdInput.value = localStorage.getItem("mneme.firebaseAppId") || "";
+  const fileConfig = window.MNEME_FIREBASE_CONFIG || {};
+
+  firebaseApiKeyInput.value = fileConfig.apiKey || localStorage.getItem("mneme.firebaseApiKey") || "";
+  firebaseProjectIdInput.value = fileConfig.projectId || localStorage.getItem("mneme.firebaseProjectId") || "";
+  firebaseAppIdInput.value = fileConfig.appId || localStorage.getItem("mneme.firebaseAppId") || "";
 
   if (firebaseApiKeyInput.value && firebaseProjectIdInput.value && firebaseAppIdInput.value) {
     createFirebaseClient();

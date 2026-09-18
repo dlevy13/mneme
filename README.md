@@ -44,3 +44,15 @@ Renseigner dans l'interface :
 - `appId`
 
 Puis utiliser `Enregistrer Firebase` ou `Charger Firebase`.
+
+Pour ne pas ressaisir ces valeurs, remplir le fichier local `firebase-config.js` :
+
+```js
+window.MNEME_FIREBASE_CONFIG = {
+  apiKey: "AIza...",
+  projectId: "mon-projet",
+  appId: "1:123:web:abc",
+};
+```
+
+Ce fichier est ignoré par Git. Le fichier `firebase-config.example.js` sert de modèle.

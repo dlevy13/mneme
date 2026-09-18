@@ -35,31 +35,28 @@ button {
 }
 
 .app {
-  width: min(1120px, calc(100% - 32px));
+  width: min(900px, calc(100% - 32px));
   min-height: 100vh;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 380px;
-  gap: 28px;
+  display: flex;
   align-items: center;
   padding: 32px 0;
 }
 
-.trainer,
-.editor {
+.trainer {
+  width: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
   box-shadow: var(--shadow);
-}
-
-.trainer {
   padding: 28px;
 }
 
 .topbar,
-.editor-header,
-.editor-actions,
+.deckbar,
+.deck-actions,
+.modal-header,
+.modal-actions,
 .actions {
   display: flex;
   align-items: center;
@@ -93,9 +90,7 @@ h2 {
   font-size: 1rem;
 }
 
-.editor-header p,
-.format,
-.remote-panel p,
+.modal-header p,
 .status {
   margin-bottom: 0;
   color: var(--muted);
@@ -114,6 +109,46 @@ h2 {
   font-size: 1.4rem;
 }
 
+.deckbar {
+  margin-top: 24px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fbfaf7;
+}
+
+.deckbar > div:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.deck-label {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.deck-actions button,
+.modal-actions button,
+.deck-list-item {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+}
+
+.deck-actions button:last-child,
+.modal-actions button {
+  background: white;
+  color: var(--accent);
+}
+
 .flashcard {
   width: 100%;
   min-height: 380px;
@@ -127,6 +162,7 @@ h2 {
   border-radius: 8px;
   background: #fbfaf7;
   color: var(--text);
+  cursor: pointer;
   text-align: center;
 }
 
@@ -170,7 +206,8 @@ h2 {
 }
 
 .actions button,
-.editor-actions button {
+.review-actions button,
+.modal-actions button {
   min-height: 44px;
   padding: 0 16px;
   border: 1px solid var(--accent);
@@ -180,27 +217,39 @@ h2 {
   font-weight: 700;
 }
 
-.actions button:first-child,
-.editor-actions button:last-child {
+.review-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.review-actions button:nth-child(1) {
+  border-color: #a33222;
+  background: #a33222;
+  color: white;
+}
+
+.review-actions button:nth-child(2) {
+  border-color: var(--answer);
+  background: white;
+  color: var(--answer);
+}
+
+.review-actions button:nth-child(3) {
   background: white;
   color: var(--accent);
 }
 
-.editor {
-  padding: 22px;
+.review-actions button:nth-child(4) {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
 }
 
-textarea {
-  width: 100%;
-  min-height: 360px;
-  margin: 20px 0 14px;
-  padding: 14px;
-  resize: vertical;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: #fffdfa;
-  color: var(--text);
-  line-height: 1.5;
+.actions button:first-child {
+  background: white;
+  color: var(--accent);
 }
 
 input {
@@ -229,35 +278,6 @@ label {
   color: var(--muted);
   font-size: 0.86rem;
   font-weight: 700;
-}
-
-.remote-panel {
-  display: grid;
-  gap: 12px;
-  margin-bottom: 22px;
-  padding-bottom: 22px;
-  border-bottom: 1px solid var(--border);
-}
-
-.csv-menu {
-  margin-top: 18px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: #fbfaf7;
-}
-
-.csv-menu summary {
-  min-height: 44px;
-  padding: 12px 14px;
-  color: var(--accent-dark);
-  cursor: pointer;
-  font-weight: 800;
-}
-
-.csv-panel {
-  display: grid;
-  gap: 12px;
-  padding: 0 14px 14px;
 }
 
 .csv-grid {
@@ -289,23 +309,89 @@ label {
   font-weight: 700;
 }
 
-textarea:focus,
 input:focus,
 select:focus,
+.flashcard:focus-visible,
 button:focus-visible {
   outline: 3px solid rgba(34, 108, 103, 0.25);
   outline-offset: 2px;
 }
 
+.modal {
+  width: min(560px, calc(100% - 24px));
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.modal::backdrop {
+  background: rgba(23, 23, 23, 0.34);
+}
+
+.modal-header,
+.modal-body,
+.modal-actions {
+  padding: 18px;
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+  margin-bottom: 4px;
+}
+
+.modal-body {
+  display: grid;
+  gap: 14px;
+}
+
+.modal-actions {
+  border-top: 1px solid var(--border);
+}
+
+.deck-list {
+  display: grid;
+  gap: 10px;
+}
+
+.deck-list-item {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fbfaf7;
+  color: var(--text);
+  text-align: left;
+}
+
+.deck-list-item small,
+.empty-state {
+  color: var(--muted);
+}
+
+.empty-state {
+  margin-bottom: 0;
+}
+
+.empty-state.error {
+  color: #a33222;
+  font-weight: 700;
+}
+
 @media (max-width: 860px) {
   .app {
-    grid-template-columns: 1fr;
     align-items: stretch;
     padding: 18px 0;
   }
 
-  .trainer,
-  .editor {
+  .trainer {
     padding: 18px;
   }
 
@@ -321,8 +407,10 @@ button:focus-visible {
   }
 
   .topbar,
-  .editor-header,
-  .editor-actions,
+  .deckbar,
+  .deck-actions,
+  .modal-header,
+  .modal-actions,
   .actions {
     align-items: stretch;
     flex-direction: column;
@@ -332,8 +420,14 @@ button:focus-visible {
     grid-template-columns: 1fr;
   }
 
+  .review-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .actions button,
-  .editor-actions button {
+  .review-actions button,
+  .deck-actions button,
+  .modal-actions button {
     width: 100%;
   }
 }

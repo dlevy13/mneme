@@ -2,7 +2,7 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /cards/{cardId} {
+    match /decks/{deckId} {
       allow read, create, update: if true;
       allow delete: if false;
     }

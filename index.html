@@ -19,100 +19,100 @@
           </button>
         </header>
 
-        <button class="flashcard" id="flashcard" type="button" aria-live="polite">
+        <div class="deckbar">
+          <div>
+            <span class="deck-label">Deck</span>
+            <strong id="current-deck-name">Exemple</strong>
+            <span class="count" id="card-count">0 carte</span>
+          </div>
+          <div class="deck-actions">
+            <button id="open-import-deck" type="button">Importer un deck</button>
+            <button id="open-deck-list" type="button">Charger un deck</button>
+          </div>
+        </div>
+
+        <div class="flashcard" id="flashcard" role="button" tabindex="0" aria-live="polite">
           <span class="card-label" id="card-direction">Mot</span>
           <span class="card-word" id="card-prompt"></span>
           <span class="card-hint" id="card-hint">Cliquer pour révéler</span>
           <span class="card-answer" id="card-answer" hidden></span>
           <span class="card-sentence" id="card-sentence" hidden></span>
-        </button>
+        </div>
+
+        <div class="review-actions" id="review-actions" hidden>
+          <button data-score="0" type="button">0 Oublié</button>
+          <button data-score="1" type="button">1 Difficile</button>
+          <button data-score="2" type="button">2 Correct</button>
+          <button data-score="3" type="button">3 Facile</button>
+        </div>
 
         <div class="actions">
           <button id="reveal-card" type="button">Voir la réponse</button>
           <button id="shuffle-card" type="button">Carte suivante</button>
         </div>
+
+        <p class="status" id="sync-status">Mode local.</p>
       </section>
-
-      <aside class="editor" aria-labelledby="editor-title">
-        <div class="remote-panel">
-          <div>
-            <h2>Firebase</h2>
-            <p>Configuration Web Firebase pour Firestore.</p>
-          </div>
-          <label>
-            <span>API key</span>
-            <input id="firebase-api-key" type="password" placeholder="AIza..." autocomplete="off">
-          </label>
-          <label>
-            <span>Project ID</span>
-            <input id="firebase-project-id" type="text" placeholder="mon-projet" autocomplete="off">
-          </label>
-          <label>
-            <span>App ID</span>
-            <input id="firebase-app-id" type="text" placeholder="1:123:web:abc" autocomplete="off">
-          </label>
-          <div class="editor-actions">
-            <button id="save-config" type="button">Connecter</button>
-            <button id="load-remote-cards" type="button">Charger Firebase</button>
-          </div>
-          <p class="status" id="sync-status">Mode local.</p>
-        </div>
-
-        <div class="editor-header">
-          <div>
-            <h2 id="editor-title">Liste des cartes</h2>
-            <p>Une carte par ligne : mot ; traduction ; phrase facultative</p>
-          </div>
-          <span class="count" id="card-count">0 carte</span>
-        </div>
-
-        <details class="csv-menu">
-          <summary>Importer depuis un CSV/TXT</summary>
-          <div class="csv-panel">
-            <label>
-              <span>Fichier CSV ou TXT</span>
-              <input id="csv-file" type="file" accept=".csv,.txt,text/csv,text/plain">
-            </label>
-            <div class="csv-grid">
-              <label>
-                <span>Séparateur</span>
-                <select id="csv-delimiter">
-                  <option value="auto">Auto</option>
-                  <option value=",">Virgule</option>
-                  <option value=";">Point-virgule</option>
-                  <option value="tab">Tabulation</option>
-                </select>
-              </label>
-              <label class="checkbox-label">
-                <input id="csv-has-header" type="checkbox" checked>
-                <span>Ignorer l'en-tête</span>
-              </label>
-            </div>
-            <div class="editor-actions">
-              <button id="import-csv" type="button">Importer dans la liste</button>
-              <button id="import-save-csv" type="button">Importer et enregistrer</button>
-            </div>
-            <p class="format">Colonnes attendues : mot, traduction, phrase facultative.</p>
-          </div>
-        </details>
-
-        <textarea id="cards-input" spellcheck="false">bonjour; hello; Bonjour, comment allez-vous ?
-merci; thank you; Merci pour votre aide.
-livre; book; Je lis un livre le soir.
-maison; house; Cette maison est ancienne.
-vite; quickly; Il marche vite.</textarea>
-
-        <div class="editor-actions">
-          <button id="load-cards" type="button">Charger la liste</button>
-          <button id="save-remote-cards" type="button">Enregistrer Firebase</button>
-          <button id="reset-cards" type="button">Exemple</button>
-        </div>
-
-        <p class="format">
-          Le tirage choisit au hasard le sens : mot vers traduction ou traduction vers mot.
-        </p>
-      </aside>
     </main>
+
+    <dialog class="modal" id="import-deck-dialog">
+      <form method="dialog" class="modal-header">
+        <div>
+          <h2>Importer un deck</h2>
+          <p>CSV ou TXT avec les colonnes mot, traduction, phrase facultative.</p>
+        </div>
+        <button class="icon-button" id="close-import-dialog" type="button" aria-label="Fermer">×</button>
+      </form>
+
+      <div class="modal-body">
+        <label>
+          <span>Fichier</span>
+          <input id="csv-file" type="file" accept=".csv,.txt,text/csv,text/plain">
+        </label>
+        <label>
+          <span>Nom du deck</span>
+          <input id="deck-name" type="text" placeholder="Nom du deck">
+        </label>
+        <div class="csv-grid">
+          <label>
+            <span>Séparateur</span>
+            <select id="csv-delimiter">
+              <option value="auto">Auto</option>
+              <option value=",">Virgule</option>
+              <option value=";">Point-virgule</option>
+              <option value="tab">Tabulation</option>
+            </select>
+          </label>
+          <label class="checkbox-label">
+            <input id="csv-has-header" type="checkbox" checked>
+            <span>Ignorer l'en-tête</span>
+          </label>
+        </div>
+        <p class="status" id="import-preview">Choisissez un fichier pour creer un deck.</p>
+      </div>
+
+      <div class="modal-actions">
+        <button id="save-imported-deck" type="button">Enregistrer le deck</button>
+      </div>
+    </dialog>
+
+    <dialog class="modal" id="deck-list-dialog">
+      <form method="dialog" class="modal-header">
+        <div>
+          <h2>Charger un deck</h2>
+          <p>Selectionnez un deck enregistre dans Firebase.</p>
+        </div>
+        <button class="icon-button" id="close-deck-list-dialog" type="button" aria-label="Fermer">×</button>
+      </form>
+
+      <div class="modal-body">
+        <div class="deck-list" id="deck-list"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="refresh-decks" type="button">Actualiser</button>
+      </div>
+    </dialog>
 
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>

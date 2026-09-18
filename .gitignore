@@ -14,4 +14,4 @@ tmp/
 temp/
 
 # Local Firebase credentials for this app
-firebase-config.js
+#firebase-config.js

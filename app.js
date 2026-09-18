@@ -45,6 +45,12 @@ let revealed = false;
 let firestoreDb = null;
 
 const progressionIntervals = [1, 3, 7, 14, 30, 60, 120];
+const scoreLabels = {
+  0: "oublié",
+  1: "difficile",
+  2: "correct",
+  3: "facile",
+};
 
 function setStatus(message, isError = false) {
   syncStatus.textContent = message;
@@ -350,6 +356,8 @@ async function recordReview(score) {
   const reviewedCard = cards[currentCard.index];
   const interval = updateCardReview(reviewedCard, score);
 
+  reviewedCard.note = score;
+  reviewedCard.noteLabel = scoreLabels[score];
   reviewedCard.response = score;
   reviewedCard.reviewedAt = new Date().toISOString();
   reviewedCard.reviewPrompt = currentCard.prompt;

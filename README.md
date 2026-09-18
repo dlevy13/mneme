@@ -45,7 +45,9 @@ Une carte se revele au clic. Apres revelation, quatre scores apparaissent :
 - `2 Correct` : ajoute une reponse correcte et suit la progression normale.
 - `3 Facile` : ajoute une reponse correcte et allonge l'intervalle.
 
-Chaque carte conserve `level`, `next_review`, `correct`, `wrong`, `response`, `reviewedAt`, `reviewPrompt`, `reviewAnswer` et `nextReviewInDays`. Chaque reponse met a jour le deck dans Firestore.
+Chaque carte conserve `level`, `next_review`, `correct`, `wrong`, `note`, `noteLabel`, `response`, `reviewedAt`, `reviewPrompt`, `reviewAnswer` et `nextReviewInDays`. Chaque reponse met a jour le deck dans Firestore.
+
+Dans Firestore, ces champs sont dans chaque objet du tableau `cards` du document `decks/{deckId}`.
 
 ## Firebase
 

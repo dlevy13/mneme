@@ -51,6 +51,18 @@ const scoreLabels = {
   2: "correct",
   3: "facile",
 };
+const directions = {
+  frToEn: {
+    key: "frToEn",
+    label: "FR -> EN",
+    flatSuffix: "fr_en",
+  },
+  enToFr: {
+    key: "enToFr",
+    label: "EN -> FR",
+    flatSuffix: "en_fr",
+  },
+};
 
 function setStatus(message, isError = false) {
   syncStatus.textContent = message;
@@ -115,13 +127,73 @@ function addDaysIso(days) {
 }
 
 function normalizeCard(card) {
-  return {
+  const reviews = {
+    frToEn: normalizeReviewState(card, "frToEn"),
+    enToFr: normalizeReviewState(card, "enToFr"),
+  };
+  const nextCard = {
     ...card,
+    reviews,
     level: Number.isInteger(card.level) ? card.level : 0,
     next_review: card.next_review || todayIso(),
     correct: Number.isInteger(card.correct) ? card.correct : 0,
     wrong: Number.isInteger(card.wrong) ? card.wrong : 0,
   };
+
+  mirrorReviewState(nextCard, "frToEn");
+  mirrorReviewState(nextCard, "enToFr");
+
+  return nextCard;
+}
+
+function normalizeReviewState(card, directionKey) {
+  const existing = card.reviews && card.reviews[directionKey] ? card.reviews[directionKey] : {};
+  const suffix = directions[directionKey].flatSuffix;
+
+  return {
+    level: Number.isInteger(existing.level)
+      ? existing.level
+      : Number.isInteger(card[`level_${suffix}`])
+        ? card[`level_${suffix}`]
+        : 0,
+    next_review: existing.next_review || card[`next_review_${suffix}`] || card.next_review || todayIso(),
+    correct: Number.isInteger(existing.correct)
+      ? existing.correct
+      : Number.isInteger(card[`correct_${suffix}`])
+        ? card[`correct_${suffix}`]
+        : 0,
+    wrong: Number.isInteger(existing.wrong)
+      ? existing.wrong
+      : Number.isInteger(card[`wrong_${suffix}`])
+        ? card[`wrong_${suffix}`]
+        : 0,
+    note: Number.isInteger(existing.note)
+      ? existing.note
+      : Number.isInteger(card[`note_${suffix}`])
+        ? card[`note_${suffix}`]
+        : null,
+    noteLabel: existing.noteLabel || card[`noteLabel_${suffix}`] || "",
+    reviewedAt: existing.reviewedAt || card[`reviewedAt_${suffix}`] || "",
+    nextReviewInDays: Number.isInteger(existing.nextReviewInDays)
+      ? existing.nextReviewInDays
+      : Number.isInteger(card[`nextReviewInDays_${suffix}`])
+        ? card[`nextReviewInDays_${suffix}`]
+        : null,
+  };
+}
+
+function mirrorReviewState(card, directionKey) {
+  const suffix = directions[directionKey].flatSuffix;
+  const review = card.reviews[directionKey];
+
+  card[`note_${suffix}`] = review.note;
+  card[`noteLabel_${suffix}`] = review.noteLabel;
+  card[`level_${suffix}`] = review.level;
+  card[`next_review_${suffix}`] = review.next_review;
+  card[`correct_${suffix}`] = review.correct;
+  card[`wrong_${suffix}`] = review.wrong;
+  card[`reviewedAt_${suffix}`] = review.reviewedAt;
+  card[`nextReviewInDays_${suffix}`] = review.nextReviewInDays;
 }
 
 function nameFromFile(fileName) {
@@ -205,24 +277,31 @@ function updateDeckMeta() {
   cardCountEl.textContent = `${cards.length} ${cards.length > 1 ? "cartes" : "carte"}`;
 }
 
-function getDueRetryIndex() {
+function getDueRetry() {
   const dueReview = retryQueue
     .filter((review) => review.dueAt <= cardsSeen)
     .sort((a, b) => a.dueAt - b.dueAt)[0];
 
-  return dueReview ? dueReview.cardIndex : null;
+  return dueReview || null;
 }
 
-function getDueCardIndices() {
+function getDueCardReviews() {
   const today = todayIso();
-  const blockedRetryIndices = retryQueue
+  const blockedRetries = retryQueue
     .filter((review) => review.dueAt > cardsSeen)
-    .map((review) => review.cardIndex);
+    .map((review) => `${review.cardIndex}:${review.directionKey}`);
 
-  return cards
-    .map((card, index) => ({ card, index }))
-    .filter(({ card, index }) => (card.next_review || today) <= today && !blockedRetryIndices.includes(index))
-    .map(({ index }) => index);
+  return cards.flatMap((card, index) =>
+    Object.keys(directions).map((directionKey) => ({
+      card,
+      index,
+      directionKey,
+      review: card.reviews[directionKey],
+    })),
+  )
+    .filter(({ review, index, directionKey }) =>
+      (review.next_review || today) <= today && !blockedRetries.includes(`${index}:${directionKey}`),
+    );
 }
 
 function pickCard() {
@@ -237,10 +316,10 @@ function pickCard() {
     return;
   }
 
-  const retryIndex = getDueRetryIndex();
-  const dueIndices = getDueCardIndices();
+  const retry = getDueRetry();
+  const dueReviews = getDueCardReviews();
 
-  if (retryIndex === null && dueIndices.length === 0) {
+  if (!retry && dueReviews.length === 0) {
     currentCard = null;
     promptEl.textContent = "Aucune carte à réviser";
     directionEl.textContent = "Session terminée";
@@ -251,18 +330,20 @@ function pickCard() {
     return;
   }
 
-  const cardIndex = retryIndex === null
-    ? dueIndices[Math.floor(Math.random() * dueIndices.length)]
-    : retryIndex;
+  const dueReview = retry || dueReviews[Math.floor(Math.random() * dueReviews.length)];
+  const cardIndex = dueReview.index ?? dueReview.cardIndex;
   const card = cards[cardIndex];
+  const directionKey = dueReview.directionKey;
+  const reverse = directionKey === "enToFr";
 
   currentCard = {
     index: cardIndex,
     card,
-    prompt: card.word,
-    answer: card.translation,
+    directionKey,
+    prompt: reverse ? card.translation : card.word,
+    answer: reverse ? card.word : card.translation,
     sentence: card.sentence,
-    direction: "FR -> EN",
+    direction: directions[directionKey].label,
   };
 
   cardsSeen += 1;
@@ -323,18 +404,18 @@ async function saveCurrentDeckProgress() {
   }
 }
 
-function updateCardReview(card, score) {
+function updateReviewState(review, score) {
   let interval = 0;
 
   if (score === 0) {
-    card.level = 0;
-    card.wrong = (card.wrong || 0) + 1;
+    review.level = 0;
+    review.wrong = (review.wrong || 0) + 1;
     interval = 0;
   } else {
-    card.correct = (card.correct || 0) + 1;
-    card.level = (card.level || 0) + 1;
+    review.correct = (review.correct || 0) + 1;
+    review.level = (review.level || 0) + 1;
 
-    const progressionIndex = Math.min(card.level - 1, progressionIntervals.length - 1);
+    const progressionIndex = Math.min(review.level - 1, progressionIntervals.length - 1);
     interval = progressionIntervals[progressionIndex];
 
     if (score === 1) {
@@ -344,7 +425,7 @@ function updateCardReview(card, score) {
     }
   }
 
-  card.next_review = addDaysIso(interval);
+  review.next_review = addDaysIso(interval);
   return interval;
 }
 
@@ -354,21 +435,33 @@ async function recordReview(score) {
   }
 
   const reviewedCard = cards[currentCard.index];
-  const interval = updateCardReview(reviewedCard, score);
+  const reviewState = reviewedCard.reviews[currentCard.directionKey];
+  const interval = updateReviewState(reviewState, score);
 
-  reviewedCard.note = score;
-  reviewedCard.noteLabel = scoreLabels[score];
+  reviewState.note = score;
+  reviewState.noteLabel = scoreLabels[score];
+  reviewState.response = score;
+  reviewState.reviewedAt = new Date().toISOString();
+  reviewState.reviewDirection = currentCard.direction;
+  reviewState.reviewPrompt = currentCard.prompt;
+  reviewState.reviewAnswer = currentCard.answer;
+  reviewState.nextReviewInDays = interval;
+  mirrorReviewState(reviewedCard, currentCard.directionKey);
+
   reviewedCard.response = score;
-  reviewedCard.reviewedAt = new Date().toISOString();
+  reviewedCard.reviewedAt = reviewState.reviewedAt;
+  reviewedCard.reviewDirection = currentCard.direction;
   reviewedCard.reviewPrompt = currentCard.prompt;
   reviewedCard.reviewAnswer = currentCard.answer;
-  reviewedCard.nextReviewInDays = interval;
 
-  retryQueue = retryQueue.filter((review) => review.cardIndex !== currentCard.index);
+  retryQueue = retryQueue.filter((review) =>
+    review.cardIndex !== currentCard.index || review.directionKey !== currentCard.directionKey,
+  );
 
   if (score <= 1) {
     retryQueue.push({
       cardIndex: currentCard.index,
+      directionKey: currentCard.directionKey,
       dueAt: cardsSeen + 3 + Math.floor(Math.random() * 2),
     });
   }
@@ -560,6 +653,7 @@ csvHasHeaderInput.addEventListener("change", previewSelectedDeckFile);
 saveImportedDeckButton.addEventListener("click", saveImportedDeck);
 refreshDecksButton.addEventListener("click", refreshDeckList);
 
+cards = cards.map(normalizeCard);
 createFirebaseClient();
 updateDeckMeta();
 pickCard();

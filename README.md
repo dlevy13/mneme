@@ -38,6 +38,8 @@ Le bouton `Charger un deck` ouvre la liste des decks enregistrés dans Firebase.
 
 ## Revision
 
+Le sens de chaque carte est tire au hasard : `FR -> EN` ou `EN -> FR`. Chaque sens a sa propre progression de repetition.
+
 Une carte se revele au clic. Apres revelation, quatre scores apparaissent :
 
 - `0 Oublié` : remet le niveau a 0, ajoute une erreur, reprogramme aujourd'hui, et force un retour apres 3 ou 4 cartes dans la session.
@@ -45,7 +47,19 @@ Une carte se revele au clic. Apres revelation, quatre scores apparaissent :
 - `2 Correct` : ajoute une reponse correcte et suit la progression normale.
 - `3 Facile` : ajoute une reponse correcte et allonge l'intervalle.
 
-Chaque carte conserve `level`, `next_review`, `correct`, `wrong`, `note`, `noteLabel`, `response`, `reviewedAt`, `reviewPrompt`, `reviewAnswer` et `nextReviewInDays`. Chaque reponse met a jour le deck dans Firestore.
+Chaque carte conserve deux etats de revision :
+
+- `reviews.frToEn` pour `FR -> EN`
+- `reviews.enToFr` pour `EN -> FR`
+
+Chaque etat contient `level`, `next_review`, `correct`, `wrong`, `note`, `noteLabel`, `response`, `reviewedAt`, `reviewDirection`, `reviewPrompt`, `reviewAnswer` et `nextReviewInDays`.
+
+Pour une lecture plus directe dans Firestore, la carte expose aussi des champs plats :
+
+- `note_fr_en`, `noteLabel_fr_en`, `next_review_fr_en`, `level_fr_en`
+- `note_en_fr`, `noteLabel_en_fr`, `next_review_en_fr`, `level_en_fr`
+
+Chaque reponse met a jour seulement le sens interroge.
 
 Dans Firestore, ces champs sont dans chaque objet du tableau `cards` du document `decks/{deckId}`.
 

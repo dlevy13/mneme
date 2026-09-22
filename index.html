@@ -35,6 +35,14 @@
           <span class="card-label" id="card-direction">Mot</span>
           <span class="card-word" id="card-prompt"></span>
           <span class="card-hint" id="card-hint">Cliquer pour révéler</span>
+          <div class="typed-answer" id="typed-answer" hidden>
+            <input id="typed-input" type="text" autocomplete="off" placeholder="Réponse en anglais">
+            <div class="typed-actions">
+              <button id="submit-typed-answer" type="button">Valider</button>
+              <button id="show-hint" type="button">Indice</button>
+            </div>
+            <span class="typed-hint" id="typed-hint"></span>
+          </div>
           <span class="card-answer" id="card-answer" hidden></span>
           <span class="card-sentence" id="card-sentence" hidden></span>
         </div>
@@ -111,6 +119,25 @@
 
       <div class="modal-actions">
         <button id="refresh-decks" type="button">Actualiser</button>
+      </div>
+    </dialog>
+
+    <dialog class="modal wide-modal" id="edit-deck-dialog">
+      <form method="dialog" class="modal-header">
+        <div>
+          <h2 id="edit-deck-title">Modifier un deck</h2>
+          <p>Supprimez les lignes importées par erreur, puis sauvegardez.</p>
+        </div>
+        <button class="icon-button" id="close-edit-deck-dialog" type="button" aria-label="Fermer">×</button>
+      </form>
+
+      <div class="modal-body">
+        <div class="edit-card-list" id="edit-card-list"></div>
+        <p class="status" id="edit-deck-status"></p>
+      </div>
+
+      <div class="modal-actions">
+        <button id="save-edited-deck" type="button">Sauvegarder</button>
       </div>
     </dialog>
 

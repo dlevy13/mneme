@@ -18,8 +18,8 @@ Les fichiers nécessaires doivent rester dans le même dossier :
 Les decks s'importent depuis un fichier CSV ou TXT avec ces colonnes :
 
 ```txt
-mot; traduction; phrase facultative
-bonjour; hello; Bonjour, comment allez-vous ?
+mot; traduction; phrase facultative; synonymes anglais facultatifs
+bonjour; hello; Bonjour, comment allez-vous ?; hi / hey
 merci; thank you; Merci pour votre aide.
 ```
 
@@ -32,27 +32,36 @@ mot,traduction,phrase facultative
 bonjour,hello,"Bonjour, comment allez-vous ?"
 ```
 
-Le séparateur peut être une virgule, un point-virgule ou une tabulation.
+Le séparateur peut être une virgule, un point-virgule ou une tabulation. Une 4e colonne facultative peut contenir des synonymes anglais acceptes pour la saisie `FR -> EN`.
 
-Le bouton `Charger un deck` ouvre la liste des decks enregistrés dans Firebase.
+Le bouton `Charger un deck` ouvre la liste des decks enregistrés dans Firebase. Chaque deck affiche le ratio cartes connues / total, et un bouton `Modifier` permet de supprimer des lignes importees par erreur avant sauvegarde.
 
 ## Revision
 
-Le sens de chaque carte est tire au hasard : `FR -> EN` ou `EN -> FR`. Chaque sens a sa propre progression de repetition.
+Chaque mot cree deux cartes independantes :
 
-Une carte se revele au clic. Apres revelation, quatre scores apparaissent :
+- `EN -> FR` : active des l'import.
+- `FR -> EN` : verrouillee au depart, puis debloquee apres 2 reussites en `EN -> FR`.
 
-- `0 Oublié` : remet le niveau a 0, ajoute une erreur, reprogramme aujourd'hui, et force un retour apres 3 ou 4 cartes dans la session.
-- `1 Difficile` : ajoute une reponse correcte, reprogramme selon la progression reduite, et force aussi un retour apres 3 ou 4 cartes dans la session.
+Chaque sens a sa propre progression de repetition, son propre `ease`, son intervalle, ses oublis et sa note.
+
+`EN -> FR` se fait en revelation classique. `FR -> EN` demande une saisie tapee avec correction automatique tolerante aux fautes simples et aux synonymes anglais importes.
+
+Apres revelation ou correction automatique, quatre scores apparaissent :
+
+- `0 Oublié` : ajoute une erreur, passe en reapprentissage, et garde environ la moitie de l'intervalle si la carte etait deja en revision.
+- `1 Difficile` : fait peu progresser l'intervalle, baisse l'ease.
 - `2 Correct` : ajoute une reponse correcte et suit la progression normale.
 - `3 Facile` : ajoute une reponse correcte et allonge l'intervalle.
 
-Chaque carte conserve deux etats de revision :
+Un oubli en revision conserve environ la moitie de l'intervalle au lieu de tout perdre. Les cartes soeurs sont enterrees jusqu'au lendemain pour eviter qu'une reponse revele l'autre sens. Si `EN -> FR` est rate, `FR -> EN` est retrograde.
 
-- `reviews.frToEn` pour `FR -> EN`
-- `reviews.enToFr` pour `EN -> FR`
+Chaque carte conserve deux sous-cartes :
 
-Chaque etat contient `level`, `next_review`, `correct`, `wrong`, `note`, `noteLabel`, `response`, `reviewedAt`, `reviewDirection`, `reviewPrompt`, `reviewAnswer` et `nextReviewInDays`.
+- `reviewCards.en_fr` pour `EN -> FR`
+- `reviewCards.fr_en` pour `FR -> EN`
+
+Chaque sous-carte contient `state`, `ease`, `interval`, `reps`, `lapses`, `due`, `buried_until`, `note`, `noteLabel`, `reviewedAt`, `reviewDirection`, `reviewPrompt`, `reviewAnswer` et `nextReviewInDays`.
 
 Pour une lecture plus directe dans Firestore, la carte expose aussi des champs plats :
 

@@ -15,6 +15,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -198,6 +202,38 @@ h2 {
   font-weight: 800;
 }
 
+.typed-answer {
+  width: min(100%, 520px);
+  display: grid;
+  gap: 10px;
+}
+
+.typed-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.typed-actions button {
+  min-height: 40px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+}
+
+.typed-actions button:last-child {
+  background: white;
+  color: var(--accent);
+}
+
+.typed-hint {
+  min-height: 22px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
 .card-sentence {
   max-width: 640px;
   color: var(--muted);
@@ -327,6 +363,10 @@ button:focus-visible {
   box-shadow: var(--shadow);
 }
 
+.wide-modal {
+  width: min(860px, calc(100% - 24px));
+}
+
 .modal::backdrop {
   background: rgba(23, 23, 23, 0.34);
 }
@@ -371,8 +411,67 @@ button:focus-visible {
   text-align: left;
 }
 
+.deck-load-button {
+  min-height: 48px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  text-align: left;
+}
+
+.deck-edit-button,
+.edit-card-row button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  color: var(--answer);
+  font-weight: 700;
+}
+
 .deck-list-item small,
 .empty-state {
+  color: var(--muted);
+}
+
+.edit-card-list {
+  max-height: min(62vh, 620px);
+  overflow: auto;
+  display: grid;
+  gap: 10px;
+}
+
+.edit-card-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fbfaf7;
+}
+
+.edit-card-content {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.edit-card-content strong,
+.edit-card-content span,
+.edit-card-content small {
+  overflow-wrap: anywhere;
+}
+
+.edit-card-content small {
   color: var(--muted);
 }
 
@@ -427,7 +526,17 @@ button:focus-visible {
   .actions button,
   .review-actions button,
   .deck-actions button,
+  .deck-edit-button,
   .modal-actions button {
     width: 100%;
+  }
+
+  .deck-list-item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .edit-card-row {
+    grid-template-columns: 1fr;
   }
 }

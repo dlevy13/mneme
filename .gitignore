@@ -15,3 +15,4 @@ temp/
 
 # Local Firebase credentials for this app
 #firebase-config.js
+/vocab_trainer_algo en py.md

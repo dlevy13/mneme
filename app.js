@@ -827,17 +827,22 @@ function acceptedAnswers(card) {
 
 function isKnownReview(review) {
   return review
-    && review.state === "review"
-    && review.reps >= 2
+    && ["learning", "relearning", "review"].includes(review.state)
     && !review.leech
-    && (review.note === null || review.note >= 2);
+    && (
+      review.note >= 2
+      || review.correct > 0
+      || review.reps > 0
+    );
 }
 
 function isKnownCard(card) {
   const normalizedCard = normalizeCard(card);
 
   return isKnownReview(normalizedCard.reviewCards.en_fr)
-    && isKnownReview(normalizedCard.reviewCards.fr_en);
+    || isKnownReview(normalizedCard.reviewCards.fr_en)
+    || card.note >= 2
+    || card.correct > 0;
 }
 
 function knownCardCount(deckCards) {

@@ -41,7 +41,7 @@ Le bouton `Charger un deck` ouvre la liste des decks enregistrés dans Firebase.
 Chaque mot cree deux cartes independantes :
 
 - `EN -> FR` : active des l'import.
-- `FR -> EN` : verrouillee au depart, puis debloquee apres 2 reussites en `EN -> FR`.
+- `FR -> EN` : verrouillee au depart, puis debloquee des que `EN -> FR` passe en revision.
 
 Chaque sens a sa propre progression de repetition, son propre `ease`, son intervalle, ses oublis et sa note.
 

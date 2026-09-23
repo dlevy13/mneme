@@ -75,7 +75,7 @@ const settings = {
   frEnBacklogLimit: 40,
   leechThreshold: 8,
   dayStartsAtHour: 4,
-  unlockFrEnAfterReps: 2,
+  unlockFrEnAfterReps: 1,
   newEveryNReviews: 4,
   learningLookaheadMin: 10,
   minThinkMs: 1200,
@@ -784,7 +784,7 @@ function tryUnlock(card) {
   const enFr = card.reviewCards.en_fr;
   const frEn = card.reviewCards.fr_en;
 
-  if (frEn.state === "locked" && enFr.state === "review" && enFr.reps >= settings.unlockFrEnAfterReps) {
+  if (frEn.state === "locked" && enFr.state === "review") {
     frEn.state = "new";
     frEn.due = new Date().toISOString();
     mirrorReviewCard(card, "fr_en");

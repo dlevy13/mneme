@@ -34,7 +34,7 @@ bonjour,hello,"Bonjour, comment allez-vous ?"
 
 Le séparateur peut être une virgule, un point-virgule ou une tabulation. Une 4e colonne facultative peut contenir des synonymes anglais acceptes pour la saisie `FR -> EN`.
 
-Le bouton `Charger un deck` ouvre la liste des decks enregistrés dans Firebase. Chaque deck affiche le ratio cartes deja reussies au moins une fois / total, et un bouton `Modifier` permet de supprimer des lignes importees par erreur avant sauvegarde.
+Le bouton `Charger un deck` ouvre la liste des decks enregistrés dans Firebase. Chaque deck affiche le ratio cartes deja reussies au moins une fois / total. Les boutons `Modifier` et `Supprimer` permettent de corriger ou retirer un deck.
 
 ## Revision
 

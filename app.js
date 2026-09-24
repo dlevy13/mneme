@@ -1112,6 +1112,33 @@ async function saveEditedDeck() {
   }
 }
 
+async function deleteDeck(deckId, deckName) {
+  if (!firestoreDb && !createFirebaseClient()) {
+    setStatus("Firebase n'est pas configuré.", true);
+    return;
+  }
+
+  const confirmed = window.confirm(`Supprimer définitivement le deck "${deckName}" ?`);
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    await firestoreDb.collection("decks").doc(deckId).delete();
+
+    if (currentDeckId === deckId) {
+      currentDeckId = null;
+      loadDeck("Exemple", defaultCards.map(normalizeCard), null);
+    }
+
+    await refreshDeckList();
+    setStatus(`Deck "${deckName}" supprimé.`);
+  } catch (error) {
+    setStatus(`Erreur Firebase : ${error.message}`, true);
+  }
+}
+
 async function refreshDeckList() {
   deckListEl.innerHTML = "";
 
@@ -1138,6 +1165,7 @@ async function refreshDeckList() {
       const name = document.createElement("span");
       const count = document.createElement("small");
       const editButton = document.createElement("button");
+      const deleteButton = document.createElement("button");
       const deckName = deck.name || deckDoc.id;
       const deckCards = Array.isArray(deck.cards) ? deck.cards : [];
       const known = knownCardCount(deckCards);
@@ -1151,6 +1179,9 @@ async function refreshDeckList() {
       editButton.type = "button";
       editButton.className = "deck-edit-button";
       editButton.textContent = "Modifier";
+      deleteButton.type = "button";
+      deleteButton.className = "deck-delete-button";
+      deleteButton.textContent = "Supprimer";
       info.addEventListener("click", () => {
         loadDeck(deckName, deckCards, deckDoc.id);
         deckListDialog.close();
@@ -1159,8 +1190,11 @@ async function refreshDeckList() {
       editButton.addEventListener("click", () => {
         openEditDeckDialog(deckDoc.id, deckName, deckCards);
       });
+      deleteButton.addEventListener("click", () => {
+        deleteDeck(deckDoc.id, deckName);
+      });
       info.append(name, count);
-      item.append(info, editButton);
+      item.append(info, editButton, deleteButton);
       deckListEl.append(item);
     });
   } catch (error) {
